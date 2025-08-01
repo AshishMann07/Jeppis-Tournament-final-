@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jeppis Nepal Tournament</title>
+    <style>
+      :root {
+        --bg: #0e4d1b;
+        --fg: #fff;
+        --accent: #1e90ff;
+        --card: rgba(0, 0, 0, 0.6);
+      }
+      [data-theme="light"] {
+        --bg: #f0f0f0;
+        --fg: #111;
+        --accent: #0a66c2;
+        --card: #fff;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        min-height: 100vh;
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+      header {
+        text-align: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.6);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      #slider img {
+        width: 500px;
+        height: 300px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .image-p {
+        text-align: center;
+        font-family:
+          "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+        margin-top: 60px;
+        font-size: 3rem;
+      }
+
+      .logo-wrap {
+        background: radial-gradient(circle, #1e90ff44 0%, transparent 70%);
+        padding: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 20px #1e90ff22;
+      }
+      .logo-wrap img {
+        width: 180px;
+        margin-bottom: 10px;
+        mix-blend-mode: multiply;
+      }
+      nav {
+        background: #111;
+        padding: 10px 20px;
+        text-align: center;
+        position: relative;
+      }
+      #navToggle {
+        background: #222;
+        color: #fff;
+        border: none;
+        font-size: 1.2em;
+        padding: 10px 20px;
+        cursor: pointer;
+        display: block;
+        width: 100%;
+      }
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+        padding: 10px 0;
+        background: rgba(0, 0, 0, 0.4);
+        transition: background 0.3s ease;
+      }
+      .nav-links.show {
+        display: flex;
+      }
+      .nav-links button {
+        background: rgba(51, 51, 51, 0.8);
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        font-size: 1em;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+      }
+      .nav-links button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      @media (min-width: 600px) {
+        #navToggle {
+          display: none;
+        }
+        .nav-links {
+          display: flex !important;
+          flex-direction: row;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.3);
+          margin-top: 0;
+          padding: 0;
+        }
+        .nav-links button {
+          background: transparent;
+          padding: 10px 20px;
+        }
+        .nav-links button:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+      .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+      }
+      .hidden {
+        display: none;
+      }
+      .highlight-img {
+        width: 100%;
+        max-width: 600px;
+        border-radius: 10px;
+        margin: 20px auto;
+        display: block;
+      }
+      .jersey-lineup {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        height: 500px;
+        margin: 20px auto; /* Center horizontally */
+        background: linear-gradient(to bottom, #0b6623, #0a4416);
+        border: 4px solid white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px #000;
+        overflow: hidden;
+      }
+      .jersey {
+        position: absolute;
+        width: 100px;
+        height: 120px;
+        background: url("./jersey.png") no-repeat center/contain;
+        display: flex;
+        flex-direction: column; /* <-- this stacks text vertically */
+        align-items: center; /* center horizontally */
+        justify-content: flex-start;
+        padding-top: 65px;
+        padding-left: 5px;
+        color: white;
+        font-weight: bold;
+        text-shadow: 1px 1px 3px black;
+        text-align: center;
+        transition: box-shadow 0.3s ease;
+        cursor: default;
+        font-size: 0.9em;
+        line-height: 1.1em;
+      }
+
+      .jersey:hover {
+        box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.7);
+        z-index: 2;
+      }
+      .player-list h2 {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .player-list {
+        background: rgba(255 255 255 / 0.1); /* translucent light background */
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 600px;
+        margin: 20px auto;
+        box-shadow: 0 0 15px rgba(255 255 255 / 0.15);
+        transition: background-color 0.3s ease;
+      }
+
+      .player-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        gap: 12px;
+      }
+
+      .player-list li {
+        background: rgba(255 255 255 / 0.15);
+        padding: 10px 15px;
+        border-radius: 8px;
+        min-width: 140px;
+        text-align: center;
+        font-weight: 600;
+        color: var(--fg);
+        cursor: default;
+        transition: background-color 0.3s ease;
+      }
+
+      /* Hover effect on player items */
+      .player-list li:hover {
+        background: rgba(255, 255, 255, 0.868);
+        color: black;
+        box-shadow: 0 0 8px black;
+      }
+
+      #pandaButton {
+        background-color: #fff;
+        border: 2px solid #000;
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #000;
+        cursor: pointer;
+        font-family: "Arial Rounded MT Bold", sans-serif;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease-in-out;
+      }
+
+      #pandaButton:hover {
+        background-color: #f5f5f5;
+        transform: scale(1.05);
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        border: 1px solid #aaa;
+        padding: 10px;
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 400px;
+        margin: auto;
+      }
+      input[type="text"],
+      button[type="submit"] {
+        padding: 10px;
+        font-size: 1em;
+      }
+      footer {
+        text-align: center;
+        padding: 20px;
+        background: var(--card);
+        margin-top: 40px;
+        font-size: 0.9em;
+      }
+      #rsvpConfirm {
+        margin-top: 10px;
+        font-weight: bold;
+        text-align: center;
+        color: #00ff00;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo-wrap">
+        <img src="./other-images/JEPPIS-LOGO.png" alt="Jeppis Logo" />
+      </div>
+      <h1>JEPPIS NEPAL TOURNAMENT 2025</h1>
+    </header>
+
+    <nav>
+      <button id="navToggle">☰ Menu</button>
+      <div class="nav-links" id="navLinks">
+        <button onclick="showSection('home')">Home</button>
+        <button onclick="showSection('lineup')">Starting-Lineup</button>
+        <button onclick="showSection('players')">Players</button>
+        <button onclick="showSection('schedule')">Schedule</button>
+        <button onclick="showSection('rsvp')">Hungry</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <section id="home">
+        <div id="slider">
+          <img
+            src="/images/jeppis-pic.jpeg"
+            class="highlight-img"
+            alt="Slide 1"
+          />
+        </div>
+        <p class="image-p">Our Goal is Stopping Yours!!</p>
+      </section>
+
+      <section id="lineup" class="hidden">
+        <h2>Starting 7 Lineup</h2>
+        <div class="jersey-lineup">
+          <!-- Forward -->
+          <div
+            class="jersey"
+            style="left: 50%; top: -5%; transform: translateX(-50%)"
+          >
+            Aniel<br />
+            Thagunna<br />
+            <small>(FWD)</small>
+          </div>
+
+          <!-- Midfielders -->
+          <div
+            class="jersey"
+            style="left: 25%; top: 23%; transform: translateX(-50%)"
+          >
+            Sajan<br />Basnet<br /><small>(MID)</small>
+          </div>
+          <div
+            class="jersey"
+            style="left: 50%; top: 23%; transform: translateX(-50%)"
+          >
+            Diwakar<br />Adhikari<br /><small>(MID)</small>
+          </div>
+          <div
+            class="jersey"
+            style="left: 75%; top: 23%; transform: translateX(-50%)"
+          >
+            Roshan<br />Budathoki<br /><small>(MID)</small>
+          </div>
+
+          <!-- Defenders -->
+          <div
+            class="jersey"
+            style="left: 30%; top: 50%; transform: translateX(-50%)"
+          >
+            Saroj<br />Tamang<br /><small>(DEF)</small>
+          </div>
+          <div
+            class="jersey"
+            style="left: 70%; top: 50%; transform: translateX(-50%)"
+          >
+            Sanjaya<br />Kandel
+            <small>(DEF)</small>
+          </div>
+
+          <!-- Goalkeeper -->
+          <div
+            class="jersey"
+            style="left: 50%; top: 70%; transform: translateX(-50%)"
+          >
+            Subash<br />Sangroula<br /><small>(GK)</small>
+          </div>
+        </div>
+      </section>
+
+      <section id="players" class="hidden">
+        <div class="player-list">
+          <h2>Squad List (15 Players)</h2>
+          <ul id="playerList"></ul>
+        </div>
+      </section>
+
+      <section id="schedule" class="hidden">
+        <h2>Tournament Schedule</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Match (FIELD 1)</th>
+              <th>Time</th>
+              <th>Break</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SEINAJOKI vs PIETARSAARI</td>
+              <td>
+                09:00 - 09:20 AM (1st Half) <br />
+                09:25 - 09:45 AM (2nd Half)
+              </td>
+              <td>15 mins</td>
+            </tr>
+            <tr>
+              <td>VAASA vs PIETARSAARI</td>
+              <td>
+                10:00 - 10:20 AM (1st Half) <br />
+                10:25 - 10:45 AM (2nd Half)
+              </td>
+              <td>30 mins</td>
+            </tr>
+            <tr>
+              <td>SEINAJOKI vs VAASA</td>
+              <td>
+                11:15 - 11:35 AM (1st Half) <br />
+                11:40 - 12:00 PM (2nd Half)
+              </td>
+              <td>15 mins</td>
+            </tr>
+            <tr>
+              <td>SEINAJOKI vs OULU</td>
+              <td>
+                12:15 - 12:35 AM (1st Half) <br />
+                12:40 - 13:00 PM (2nd Half)
+              </td>
+              <td>15 mins</td>
+            </tr>
+            <tr>
+              <td>VAASA vs OULU</td>
+              <td>
+                13:15 - 13:35 PM (1st Half) <br />
+                13:40 - 14:00 PM (2nd Half)
+              </td>
+              <td>20 mins</td>
+            </tr>
+          </tbody>
+        </table>
+        <br />
+        <br />
+
+        <table>
+          <thead>
+            <tr>
+              <th>Match (FIELD 2)</th>
+              <th>Time</th>
+              <th>Break</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>VAASA vs KOKKOLA</td>
+              <td>
+                09:00 - 09:20 AM (1st Half) <br />
+                09:25 - 09:45 AM (2nd Half)
+              </td>
+              <td>15 mins</td>
+            </tr>
+            <tr>
+              <td>OULU vs KOKKOLA</td>
+              <td>
+                10:00 - 10:20 AM (1st Half) <br />
+                10:25 - 10:45 AM (2nd Half)
+              </td>
+              <td>30 mins</td>
+            </tr>
+            <tr>
+              <td>PIETARSAARI vs OULU</td>
+              <td>
+                11:15 - 11:35 AM (1st Half) <br />
+                11:40 - 12:00 PM (2nd Half)
+              </td>
+              <td>15 mins</td>
+            </tr>
+            <tr>
+              <td>PIETARSAARI vs KOKKOLA</td>
+              <td>
+                12:15 - 12:35 AM (1st Half) <br />
+                12:40 - 13:00 PM (2nd Half)
+              </td>
+              <td>15 mins</td>
+            </tr>
+            <tr>
+              <td>SEINAJOKI vs KOKKOLA</td>
+              <td>
+                13:15 - 13:35 PM (1st Half) <br />
+                13:40 - 14:00 PM (2nd Half)
+              </td>
+              <td>20 mins</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br />
+        <table>
+          <tbody>
+            <tr>
+              <th>Final-Match</th>
+              <th>Time</th>
+              <th>Break</th>
+            </tr>
+            <td>LEAUGE-TOPPER vs RUNNER-UP</td>
+            <td>
+              14:20 - 14:40 (1st Half) <br />
+              14:45 - 15:05 PM (2nd Half)
+            </td>
+            <td>THE END!!</td>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="rsvp" class="hidden">
+        <h2>Come and grab some!</h2>
+
+        <div style="text-align: center; margin-top: 20px">
+          <img
+            id="rsvpImage"
+            src="/other-images/momo new.png"
+            alt="Supporters"
+            style="max-width: 300px; border-radius: 10px"
+          />
+          <p id="rsvpText">Fuel your day with Momo-Magic!</p>
+          <button id="pandaButton" onclick="changeRSVPImage()">
+            🐼 Click Me!
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <footer>&copy; 2025 Jeppis Nepal Club.</footer>
+
+    <script>
+      // Navigation toggle for mobile
+      const navToggle = document.getElementById("navToggle");
+      const navLinks = document.getElementById("navLinks");
+
+      navToggle.addEventListener("click", () => {
+        navLinks.classList.toggle("show");
+      });
+
+      // Show section function
+      function showSection(sectionId) {
+        const sections = document.querySelectorAll("section");
+        sections.forEach((sec) => {
+          sec.classList.add("hidden");
+        });
+        document.getElementById(sectionId).classList.remove("hidden");
+        // Close menu on mobile after clicking
+        navLinks.classList.remove("show");
+      }
+
+      // Default to show home
+      showSection("home");
+
+      // Player list data
+      const players = [
+        { name: "Suresh Maharjan", position: "Forward" },
+        { name: "Bhabis Limbu", position: "Midfielder" },
+        { name: "Roshan Budathoki", position: "Midfielder" },
+        { name: "Saroj Acharya", position: "Midfielder" },
+        { name: "Saroj Tamang", position: "Defender" },
+        { name: "Sanjaya Kandel", position: "Defender" },
+        { name: "Subash Sangroula", position: "Goalkeeper" },
+        { name: "Sajan Basnet", position: "Midfielder" },
+        { name: "Uddav Dhakal", position: "Forward" },
+        { name: "Soman Budathoki", position: "Midfielder" },
+        { name: "Mohan Gurung", position: "Defender" },
+        { name: "Ashim Bastola", position: "Defender" },
+        { name: "Aniel Thagunna", position: "Forward" },
+        { name: "Aabeg Gautam", position: "Goalkeeper" },
+        { name: "Diwakar Adhikari", position: "Midfielder" },
+      ];
+
+      const playerListElem = document.getElementById("playerList");
+      playerListElem.innerHTML = ""; // clear old list
+
+      players.forEach((player) => {
+        const li = document.createElement("li");
+        li.textContent = player.name;
+        li.title = player.position; // This sets the tooltip
+        playerListElem.appendChild(li);
+      });
+
+      // RSVP image change logic
+      const rsvpImage = document.getElementById("rsvpImage");
+      const rsvpText = document.getElementById("rsvpText");
+      const rsvpPics = [
+        {
+          src: "/other-images/panda-3.jpg",
+          caption: "Sorry i will watch the highilghts gotta sleep!!",
+        },
+        {
+          src: "/other-images/panda-1.jpg",
+          caption: "Get ready to steer up some momos!",
+        },
+        {
+          src: "/other-images/panda-2.png",
+          caption: "cant stop they are too delicious!",
+        },
+      ];
+      let picIndex = 0;
+      let finished = false;
+
+      function changeRSVPImage() {
+        if (finished) return; // stop if done
+
+        picIndex++;
+
+        if (picIndex < rsvpPics.length) {
+          // Show next image in sequence
+          rsvpImage.src = rsvpPics[picIndex].src;
+          rsvpText.textContent = rsvpPics[picIndex].caption;
+        } else {
+          // After last image, go back to home image and stop
+          rsvpImage.src = rsvpPics[0].src;
+          rsvpText.textContent = rsvpPics[0].caption;
+          finished = true;
+        }
+      }
+
+      // Image Slider
+      const slider = document.getElementById("slider");
+      const images = [
+        "/images/ashish1.jpeg",
+        "/images/ashish3.jpeg",
+        "/images/ashish4.jpeg",
+        "/images/ashish5.jpeg",
+        "/images/ashish6.jpeg",
+        "/images/ashish8.jpeg",
+      ];
+      let index = 0;
+
+      setInterval(() => {
+        index = (index + 1) % images.length;
+        slider.querySelector("img").src = images[index];
+      }, 5000); // 5 seconds
+    </script>
+  </body>
+</html>
